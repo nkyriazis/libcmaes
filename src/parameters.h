@@ -553,7 +553,7 @@ namespace libcmaes
 	return _tpa;
       }
       
-    protected:
+    //protected:
       int _dim; /**< function space dimensions. */
       int _lambda = -1; /**< number of offsprings. */
       int _max_iter = -1; /**< max iterations. */

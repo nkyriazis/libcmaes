@@ -26,6 +26,8 @@
 #include "cmastopcriteria.h"
 #include <iostream>
 #include "llogging.h"
+#include <algorithm>
+#include <numeric>
 
 #ifdef HAVE_DEBUG
 #include <chrono>

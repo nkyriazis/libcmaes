@@ -244,7 +244,7 @@ namespace libcmaes
 
     void set_initial_elitist(const bool &e) { _initial_elitist = e; }
     
-  protected:
+  //protected:
     FitFunc _func; /**< the objective function. */
     int _nevals;  /**< number of function evaluations. */
     int _niter;  /**< number of iterations. */

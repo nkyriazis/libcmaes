@@ -483,7 +483,7 @@ namespace libcmaes
 			const int &verb_level=0,
 			const TGenoPheno &gp=TGenoPheno()) const;
 
-  private:
+  //private:
     dMat _cov; /**< covariance matrix. */
     dMat _csqinv; /** inverse root square of covariance matrix. */
     dMat _sepcov;

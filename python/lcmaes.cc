@@ -28,6 +28,7 @@ using namespace libcmaes;
 #include <boost/python.hpp>
 //#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/list.hpp>
+#include <boost/python/stl_iterator.hpp>
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
 using namespace boost::python;
@@ -79,6 +80,22 @@ CMAParameters<GenoPheno<NoBoundStrategy>> make_simple_parameters(const boost::py
   for (int i=0;i<len(x0);i++)
     vx0.push_back(boost::python::extract<double>(x0[i]));
   return CMAParameters<>(vx0,sigma,lambda,seed);
+}
+
+std::vector<double> vd_from_obect(const boost::python::object &o)
+{
+    boost::python::stl_input_iterator<double> first(o), last;
+    return std::vector<double>(first, last);
+}
+
+CMAParameters<GenoPheno<NoBoundStrategy>> make_simple_parameters_ms(const boost::python::list &x0,
+    const boost::python::list &sigma,
+    const boost::python::list &low,
+    const boost::python::list &high,
+    const int &lambda = -1,
+    const uint64_t &seed = 0)
+{
+    return CMAParameters<>(vd_from_obect(x0), vd_from_obect(sigma), lambda, vd_from_obect(low), vd_from_obect(high), seed);
 }
 
 boost::python::list get_solution_xmean(const CMASolutions &s)
@@ -219,6 +236,7 @@ template <class TGenoPheno=GenoPheno<NoBoundStrategy>>
 #endif
 
 BOOST_PYTHON_FUNCTION_OVERLOADS(make_simple_parameters_default,make_simple_parameters,2,4)
+BOOST_PYTHON_FUNCTION_OVERLOADS(make_simple_parameters_ms_default, make_simple_parameters_ms, 4, 6)
 BOOST_PYTHON_FUNCTION_OVERLOADS(make_parameters_default_nb,make_parameters<GenoPheno<NoBoundStrategy>>,3,5)
 BOOST_PYTHON_FUNCTION_OVERLOADS(make_parameters_default_pwqb,make_parameters<GenoPheno<pwqBoundStrategy>>,3,5)
 //BOOST_PYTHON_FUNCTION_OVERLOADS(make_parameters_default_ls,make_parameters<GenoPheno<NoBoundStrategy,linScalingStrategy>>,3,5) // prevented by bug in Boost Python
@@ -273,6 +291,7 @@ BOOST_PYTHON_MODULE(lcmaes)
     ;
   def("make_parameters",make_parameters<GenoPheno<NoBoundStrategy>>,make_parameters_default_nb(args("x0","sigma","gp","lambda","seed"),"creates a CMAParametersNB object for problem with unbounded parameters"));
   def("make_simple_parameters",make_simple_parameters,make_simple_parameters_default(args("x0","sigma","lambda","seed"),"simple constructor for creating a CMAParametersNB object for problem with unbounded parameters"));
+  def("make_simple_parameters_ms", make_simple_parameters_ms, make_simple_parameters_ms_default(args("x0", "sigma", "low", "high", "lambda", "seed"), "simple constructor for creating a CMAParametersNB object for problem with unbounded parameters"));
   class_<CMAParameters<GenoPheno<pwqBoundStrategy>>>("CMAParametersPB","CMAParameters object for problems with bounded parameters")
     .def("initialize_parameters", &CMAParameters<GenoPheno<pwqBoundStrategy>>::initialize_parameters,"initialize required CMA parameters based on dim, lambda, x0 and sigma")
     .def("set_noisy", &CMAParameters<GenoPheno<pwqBoundStrategy>>::set_noisy,"adapt CMA parameters for noisy objective function")

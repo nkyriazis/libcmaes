@@ -6,8 +6,11 @@ find_package(Eigen)
 find_package(Boost REQUIRED python)
 find_package(PythonLibs)
 find_package(Numpy)
+find_package(Glog)
 
 include_directories(${EIGEN_INCLUDE_DIR})
+include_directories(${GLOG_INCLUDE_DIR})
+add_definitions(-DHAVE_GLOG=1)
 add_library(cmaes
     src/ipopcmastrategy.cc
     src/ipopcmastrategy.h
@@ -60,6 +63,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_library(lcmaes SHARED
 	python/py_boost_function.hpp
 	python/lcmaes.cc)
-target_link_libraries(lcmaes cmaes ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+target_link_libraries(lcmaes cmaes ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${GLOG_LIBRARY})
 set_target_properties(lcmaes PROPERTIES PREFIX "")
 set_target_properties(lcmaes PROPERTIES SUFFIX ".pyd")
